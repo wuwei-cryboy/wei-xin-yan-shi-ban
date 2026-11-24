@@ -26,11 +26,8 @@ body{margin:0;background:#dcdcdc;font-family:-apple-system,BlinkMacSystemFont,"P
 .phone{width:100%;max-width:430px;height:100dvh;background:#fff;display:flex;flex-direction:column;position:relative;overflow:hidden;margin:0 auto}
 @media(min-width:500px){.phone{height:932px;max-height:94dvh;border-radius:28px;box-shadow:0 20px 60px rgba(0,0,0,.45);border:10px solid #111}}
 @media(display-mode:standalone){body{background:#ededed;padding:0}.phone{height:100dvh;max-height:none;border:0;border-radius:0;box-shadow:none}}
-/* status bar */
-.status{height:44px;background:var(--bg);display:flex;align-items:flex-end;justify-content:space-between;padding:0 22px 6px;font-weight:700;font-size:15px;flex-shrink:0}
-.status-r{display:flex;align-items:center;gap:6px;font-size:12px}
-.bars{display:flex;align-items:flex-end;gap:2px}.bars i{display:block;width:3px;background:#000;border-radius:2px}.bars i:nth-child(1){height:5px}.bars i:nth-child(2){height:7px}.bars i:nth-child(3){height:9px}.bars i:nth-child(4){height:11px;opacity:.25}
-.wifi{font-size:16px;line-height:1}.batt{background:#000;color:#fff;border-radius:6px;padding:2px 6px;font-size:11px;font-weight:800}
+/* no fake status bar: the only clock / signal / battery row is the phone's own system one.
+   The page never draws its own, so nothing of ours can sit under or over it. */
 /* header */
 .header{height:52px;background:var(--bg);display:flex;align-items:center;justify-content:center;position:relative;flex-shrink:0}
 .header h1{font-size:17px;margin:0;font-weight:500}
@@ -93,9 +90,9 @@ body{margin:0;background:#dcdcdc;font-family:-apple-system,BlinkMacSystemFont,"P
 /* discover bg */
 .page-bg{background:#ededed;min-height:100%;padding-bottom:20px}
 /* chat detail */
-.detail{position:absolute;inset:0;background:#ededed;z-index:20;display:none;flex-direction:column;transform:translateX(103%);transition:transform .34s cubic-bezier(.32,.72,.25,1);box-shadow:-14px 0 34px rgba(0,0,0,.20)}
+.detail{position:absolute;inset:0;background:#ededed;z-index:20;display:none;flex-direction:column;transform:translateX(103%);transition:transform .34s cubic-bezier(.32,.72,.25,1);border-left:1px solid rgba(0,0,0,.14);padding-top:env(safe-area-inset-top,0px)}
 .detail.show{display:flex}
-.detail.open{transform:translateX(0)}
+.detail.open{transform:none}
 .detail-head{height:52px;background:#ededed;display:flex;flex-direction:column;flex-shrink:0}
 .detail-bar{height:52px;display:flex;align-items:center;padding:0 8px;gap:4px}
 .back{width:40px;height:40px;border:0;background:none;cursor:pointer;display:grid;place-items:center;padding:0}
@@ -185,7 +182,7 @@ body{margin:0;background:#dcdcdc;font-family:-apple-system,BlinkMacSystemFont,"P
 .detail.dark .msg:not(.me) .voice-b{color:#fff}
 .detail.dark .msg.me .voice-b{color:#191919}
 /* --- sharp top bars: solid opaque, no blur, no shadow on titles --- */
-.status,.header,.detail-head,.panel-head,.tabbar{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
+.header,.detail-head,.panel-head,.tabbar{-webkit-backdrop-filter:none!important;backdrop-filter:none!important}
 .header h1,.detail-title,.panel-title{text-shadow:none!important;filter:none!important;opacity:1!important}
 /* --- hide native scrollbars; overlay thumb below --- */
 .main,.msgs,.panel-body{scrollbar-width:none;-ms-overflow-style:none}
@@ -193,8 +190,8 @@ body{margin:0;background:#dcdcdc;font-family:-apple-system,BlinkMacSystemFont,"P
 .scroll-thumb{position:absolute;width:3px;border-radius:2px;background:#c7c7c7;opacity:0;transition:opacity .35s ease;pointer-events:none;z-index:80}
 body.dm .scroll-thumb{background:#5a5a5a}
 /* --- slide-in panels: settings & group info --- */
-.panel{position:absolute;inset:0;background:#ededed;z-index:35;display:none;flex-direction:column;transform:translateX(103%);transition:transform .34s cubic-bezier(.32,.72,.25,1);box-shadow:-14px 0 34px rgba(0,0,0,.20)}
-.panel.show{display:flex}.panel.open{transform:translateX(0)}
+.panel{position:absolute;inset:0;background:#ededed;z-index:35;display:none;flex-direction:column;transform:translateX(103%);transition:transform .34s cubic-bezier(.32,.72,.25,1);border-left:1px solid rgba(0,0,0,.14);padding-top:env(safe-area-inset-top,0px)}
+.panel.show{display:flex}.panel.open{transform:none}
 .panel-head{height:52px;background:#ededed;display:flex;align-items:center;padding:0 8px;gap:4px;flex-shrink:0}
 .panel-title{flex:1;text-align:center;font-size:17px;font-weight:500}
 .panel-head .icon-btn{color:#191919}
@@ -223,8 +220,6 @@ body.dm .scroll-thumb{background:#5a5a5a}
 /* --- dark mode (body.dm), yueer dark chat (.detail.dark) untouched --- */
 body.dm{--bg:#111111;--line:#262626;--text:#f2f2f2;--sub:#8a8a8a}
 body.dm .phone{background:#111111}
-body.dm .status .bars i{background:#f2f2f2}
-body.dm .batt{background:#f2f2f2;color:#111111}
 body.dm .plus-btn svg,body.dm .addfriend-btn svg{stroke:#f2f2f2}
 body.dm .search{background:#2c2c2c}
 body.dm .search input{color:#f2f2f2}
@@ -285,6 +280,18 @@ body.dm .header h1{color:#ffffff}
 body.dm .plus-btn svg,body.dm .addfriend-btn svg{stroke:#ffffff}
 .plus-btn,.plus-btn svg,.search-ico,.tab-badge,.tab-dot{filter:none!important;text-shadow:none!important}
 .tab-badge,.tab-dot{border:0!important;box-shadow:none!important;outline:none!important}
+/* --- crisp top, final: keep the title row out of the system status-bar zone ---
+   1) The page itself never scrolls or rubber-bands on a phone, so the title bar can
+      never slide up under the iOS frosted scrim that sits behind the real
+      clock / battery row (that scrim blurring the title was the visible halo).
+   2) Open chat / panel titles carry no transform at rest (set above via
+      .open{transform:none}) and no wide soft shadow, so iOS renders them as
+      plain sharp text, exactly like the chat-list rows below. */
+html{height:100%}
+body{overscroll-behavior:none}
+@media(max-width:499px){body{position:fixed;inset:0;width:100%;height:100dvh;overflow:hidden}}
+.header,.detail-head,.panel-head{transform:none;will-change:auto}
+.detail,.panel{will-change:auto}
 </style>
 </head>
 <body>
@@ -855,7 +862,7 @@ document.querySelectorAll('.panel-body').forEach(attachSB);
 window.addEventListener('resize',refreshSB);
 
 renderChats(); renderContacts();
-if('serviceWorker' in navigator){navigator.serviceWorker.register('data:application/javascript;base64,Y29uc3QgQ0FDSEUgPSAnd3gtZGVtby12MTUnOwpjb25zdCBDT1JFID0gWycuLi9pbmRleC5odG1sJywgJy4vbWFuaWZlc3Qud2VibWFuaWZlc3QnLCAnLi93eDkyMy0xOTIucG5nJywgJy4vd3g5MjMtNTEyLnBuZycsICcuL3d4OTIzLTE4MC5wbmcnXTsKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZSA9PiB7CiAgZS53YWl0VW50aWwoY2FjaGVzLm9wZW4oQ0FDSEUpLnRoZW4oYyA9PiBjLmFkZEFsbChDT1JFKSkudGhlbigoKSA9PiBzZWxmLnNraXBXYWl0aW5nKCkpLmNhdGNoKCgpID0+IHNlbGYuc2tpcFdhaXRpbmcoKSkpOwp9KTsKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdhY3RpdmF0ZScsIGUgPT4gewogIGUud2FpdFVudGlsKGNhY2hlcy5rZXlzKCkudGhlbihrcyA9PiBQcm9taXNlLmFsbChrcy5maWx0ZXIoayA9PiBrICE9PSBDQUNIRSkubWFwKGsgPT4gY2FjaGVzLmRlbGV0ZShrKSkpKS50aGVuKCgpID0+IHNlbGYuY2xpZW50cy5jbGFpbSgpKSk7Cn0pOwpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZSA9PiB7CiAgaWYgKGUucmVxdWVzdC5tZXRob2QgIT09ICdHRVQnKSByZXR1cm47CiAgY29uc3QgdXJsID0gbmV3IFVSTChlLnJlcXVlc3QudXJsKTsKICBjb25zdCBpc1BhZ2UgPSBlLnJlcXVlc3QubW9kZSA9PT0gJ25hdmlnYXRlJyB8fCB1cmwucGF0aG5hbWUuZW5kc1dpdGgoJy9pbmRleC5odG1sJykgfHwgdXJsLnBhdGhuYW1lLmVuZHNXaXRoKCcvJyk7CiAgaWYgKGlzUGFnZSkgewogICAgLy8gbmV0d29yay1maXJzdCBmb3IgdGhlIHBhZ2UgaXRzZWxmLCBzbyBVSSBmaXhlcyBhbHdheXMgbGFuZDsgY2FjaGUgaXMgdGhlIG9mZmxpbmUgZmFsbGJhY2sKICAgIGUucmVzcG9uZFdpdGgoZmV0Y2goZS5yZXF1ZXN0KS50aGVuKHJlcyA9PiB7CiAgICAgIGNvbnN0IGNvcHkgPSByZXMuY2xvbmUoKTsKICAgICAgY2FjaGVzLm9wZW4oQ0FDSEUpLnRoZW4oYyA9PiBjLnB1dChlLnJlcXVlc3QsIGNvcHkpKS5jYXRjaCgoKSA9PiB7fSk7CiAgICAgIHJldHVybiByZXM7CiAgICB9KS5jYXRjaCgoKSA9PiBjYWNoZXMubWF0Y2goZS5yZXF1ZXN0KS50aGVuKGhpdCA9PiBoaXQgfHwgY2FjaGVzLm1hdGNoKCcuLi9pbmRleC5odG1sJykpKSk7CiAgICByZXR1cm47CiAgfQogIGUucmVzcG9uZFdpdGgoY2FjaGVzLm1hdGNoKGUucmVxdWVzdCkudGhlbihoaXQgPT4gaGl0IHx8IGZldGNoKGUucmVxdWVzdCkudGhlbihyZXMgPT4gewogICAgY29uc3QgY29weSA9IHJlcy5jbG9uZSgpOwogICAgY2FjaGVzLm9wZW4oQ0FDSEUpLnRoZW4oYyA9PiBjLnB1dChlLnJlcXVlc3QsIGNvcHkpKS5jYXRjaCgoKSA9PiB7fSk7CiAgICByZXR1cm4gcmVzOwogIH0pLmNhdGNoKCgpID0+IGNhY2hlcy5tYXRjaCgnLi4vaW5kZXguaHRtbCcpKSkpOwp9KTsK').catch(function(){});}
+if('serviceWorker' in navigator){navigator.serviceWorker.register('data:application/javascript;base64,Y29uc3QgQ0FDSEUgPSAnd3gtZGVtby12MTYnOwpjb25zdCBDT1JFID0gWycuLi9pbmRleC5odG1sJywgJy4vbWFuaWZlc3Qud2VibWFuaWZlc3QnLCAnLi93eDkyMy0xOTIucG5nJywgJy4vd3g5MjMtNTEyLnBuZycsICcuL3d4OTIzLTE4MC5wbmcnXTsKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdpbnN0YWxsJywgZSA9PiB7CiAgZS53YWl0VW50aWwoY2FjaGVzLm9wZW4oQ0FDSEUpLnRoZW4oYyA9PiBjLmFkZEFsbChDT1JFKSkudGhlbigoKSA9PiBzZWxmLnNraXBXYWl0aW5nKCkpLmNhdGNoKCgpID0+IHNlbGYuc2tpcFdhaXRpbmcoKSkpOwp9KTsKc2VsZi5hZGRFdmVudExpc3RlbmVyKCdhY3RpdmF0ZScsIGUgPT4gewogIGUud2FpdFVudGlsKGNhY2hlcy5rZXlzKCkudGhlbihrcyA9PiBQcm9taXNlLmFsbChrcy5maWx0ZXIoayA9PiBrICE9PSBDQUNIRSkubWFwKGsgPT4gY2FjaGVzLmRlbGV0ZShrKSkpKS50aGVuKCgpID0+IHNlbGYuY2xpZW50cy5jbGFpbSgpKSk7Cn0pOwpzZWxmLmFkZEV2ZW50TGlzdGVuZXIoJ2ZldGNoJywgZSA9PiB7CiAgaWYgKGUucmVxdWVzdC5tZXRob2QgIT09ICdHRVQnKSByZXR1cm47CiAgY29uc3QgdXJsID0gbmV3IFVSTChlLnJlcXVlc3QudXJsKTsKICBjb25zdCBpc1BhZ2UgPSBlLnJlcXVlc3QubW9kZSA9PT0gJ25hdmlnYXRlJyB8fCB1cmwucGF0aG5hbWUuZW5kc1dpdGgoJy9pbmRleC5odG1sJykgfHwgdXJsLnBhdGhuYW1lLmVuZHNXaXRoKCcvJyk7CiAgaWYgKGlzUGFnZSkgewogICAgLy8gbmV0d29yay1maXJzdCBmb3IgdGhlIHBhZ2UgaXRzZWxmLCBzbyBVSSBmaXhlcyBhbHdheXMgbGFuZDsgY2FjaGUgaXMgdGhlIG9mZmxpbmUgZmFsbGJhY2sKICAgIGUucmVzcG9uZFdpdGgoZmV0Y2goZS5yZXF1ZXN0KS50aGVuKHJlcyA9PiB7CiAgICAgIGNvbnN0IGNvcHkgPSByZXMuY2xvbmUoKTsKICAgICAgY2FjaGVzLm9wZW4oQ0FDSEUpLnRoZW4oYyA9PiBjLnB1dChlLnJlcXVlc3QsIGNvcHkpKS5jYXRjaCgoKSA9PiB7fSk7CiAgICAgIHJldHVybiByZXM7CiAgICB9KS5jYXRjaCgoKSA9PiBjYWNoZXMubWF0Y2goZS5yZXF1ZXN0KS50aGVuKGhpdCA9PiBoaXQgfHwgY2FjaGVzLm1hdGNoKCcuLi9pbmRleC5odG1sJykpKSk7CiAgICByZXR1cm47CiAgfQogIGUucmVzcG9uZFdpdGgoY2FjaGVzLm1hdGNoKGUucmVxdWVzdCkudGhlbihoaXQgPT4gaGl0IHx8IGZldGNoKGUucmVxdWVzdCkudGhlbihyZXMgPT4gewogICAgY29uc3QgY29weSA9IHJlcy5jbG9uZSgpOwogICAgY2FjaGVzLm9wZW4oQ0FDSEUpLnRoZW4oYyA9PiBjLnB1dChlLnJlcXVlc3QsIGNvcHkpKS5jYXRjaCgoKSA9PiB7fSk7CiAgICByZXR1cm4gcmVzOwogIH0pLmNhdGNoKCgpID0+IGNhY2hlcy5tYXRjaCgnLi4vaW5kZXguaHRtbCcpKSkpOwp9KTsK').catch(function(){});}
 </script>
 </body>
 </html>
